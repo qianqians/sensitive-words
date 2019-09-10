@@ -32,12 +32,16 @@ class SensitiveWordFilter{
 	checkSensitiveWord(txt, beginIndex, matchType = 1){
 		let flag = false,
 			matchFlag = 0,
-			word = 0;
+			word = 0,
+			test_count = 0,
+			try_test = false;
 		let nowMap = this.sensitiveWordMap.getSensitiveWordMap();
 		for(let i = beginIndex; i < txt.length ; i++){
 			word = txt[i];
+			let tmp = nowMap;
 			nowMap = nowMap[word];
 			if(nowMap){
+				try_test = true;
 				matchFlag++;
 				if(nowMap.isEnd){
 					flag = true;
@@ -46,6 +50,12 @@ class SensitiveWordFilter{
 					}
 				}
 			} else {
+				if (try_test && test_count < 3){
+					nowMap = tmp;
+					test_count++;
+					matchFlag++;
+					continue;
+				}
 				break;
 			}
 		}
